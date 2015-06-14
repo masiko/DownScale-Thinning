@@ -2,14 +2,21 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "DownScale.h"
+#include "Thinning.h"
 
 int main() {
-	DownScale dw;
-	cv::Mat output;
-	cv::Mat input = cv::imread("test.png");
-	output.create(input.rows/8, input.cols/8, CV_8UC1);
-	dw.setImage(input, 8);
-	dw.downscale(output, 125);
+	int thr, sca, num;
+//	cv::Mat output;
+	cv::Mat output = cv::imread("test.png");
+	std::cin>>thr;
+	std::cin>>sca;
+	std::cin>>num;
+	if ( output.type() == CV_8UC3) cv::cvtColor(output, output, CV_BGR2GRAY);
+
+	for (int i=0; i<num; i++)	{
+		output = Thinning(output, thr);
+		output = downscale(output, sca);
+	}
 
 	cv::namedWindow("dst");
 	cv::imshow("dst", output);
