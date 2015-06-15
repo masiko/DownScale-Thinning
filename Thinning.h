@@ -1,11 +1,10 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
-//#include "DownScale.h"
 
 cv::Mat Thinning(cv::Mat input, int threshold) {
 	cv::Mat output;
-	int num = 1;
+	int num = 0;
 	int col, row;
 	int ix, iy;
 	col = input.cols;
@@ -14,17 +13,10 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 
 	if ( input.type() == CV_8UC3) cv::cvtColor(input, input, CV_BGR2GRAY);
 	
-	for (;num>0;) {
-	num = 0;
+	for (;;) {
 	for (int i=1; i<row-1; i++) {
 		iy = i*col;
-		for (int j=0; j<col-1; j++) {
-/*			if ( input.data[j + iy]<threshold ) output.data[j + iy] = 0;
-			else if ( input.data[j+1 + iy]<threshold && 
-				input.data[j+1 + iy+col]<threshold &&
-				input.data[j + iy+col]<threshold ) output.data[j + iy] = 255;
-			else								output.data[j + iy] = 0;
-*/
+		for (int j=1; j<col-1; j++) {
 			if ( input.data[j + iy] > threshold ) {
 				if ( input.data[j + iy-col] < threshold || input.data[j+1 + iy] < threshold) {
 					if ( (input.data[j+1 + iy] > threshold && input.data[j + iy+col] > threshold && input.data[j+1 + iy+col] < threshold) ||
@@ -45,11 +37,14 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 			else output.data[j + iy] = 0;
 		}
 	}
-	for (int i=row-2; i>=0; i--) {
+	
+	output.copyTo(input);
+	
+	for (int i=row-2; i>=1; i--) {
 		iy = i*col;
-		for (int j=col-2; j>=0; j--) {
+		for (int j=col-2; j>=1; j--) {
 			if ( input.data[j + iy] > threshold ) {
-				if ( input.data[j + iy-col] < threshold || input.data[j+1 + iy] < threshold) {
+				if ( input.data[j + iy+col] < threshold || input.data[j-1 + iy] < threshold) {
 					if ( (input.data[j-1 + iy] > threshold && input.data[j + iy-col] > threshold && input.data[j-1 + iy-col] < threshold) ||
 					 (input.data[j+1 + iy] > threshold && input.data[j + iy+col] > threshold && input.data[j+1 + iy+col] < threshold) ||
 					 (input.data[j+1 + iy] < threshold && input.data[j + iy-col] > threshold && input.data[j-1 + iy] > threshold) ||
@@ -69,6 +64,8 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 		}
 	}
 	std::cout<<num<<",";
+	if (!num)	break;
+	num = 0;
 	output.copyTo(input);
 	}
 

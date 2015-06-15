@@ -4,5 +4,5 @@ project(DownScale)
 
 set(CMAKE_CXX_FLAGS_RELEASE)
 find_package(OpenCV REQUIRED)
-add_executable(DownScale test_main.cpp DownScale.cpp)
+add_executable(DownScale test_main.cpp)
 target_link_libraries(DownScale ${OpenCV_LIBS})
