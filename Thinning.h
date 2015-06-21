@@ -13,7 +13,6 @@ cv::Mat thinning(cv::Mat input, int threshold, int* num) {
 
 	if ( input.type() == CV_8UC3) cv::cvtColor(input, input, CV_BGR2GRAY);
 	
-//	for (;;) {
 	for (int i=1; i<row-1; i++) {
 		iy = i*col;
 		for (int j=1; j<col-1; j++) {
@@ -64,7 +63,6 @@ cv::Mat thinning(cv::Mat input, int threshold, int* num) {
 		}
 	}
 	output.copyTo(input);
-//	}
 
 	return output;
 }

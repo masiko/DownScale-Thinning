@@ -3,6 +3,7 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "DownScale.h"
 #include "Thinning.h"
+#include "FT.h"
 
 int main() {
 	char sw;
@@ -47,5 +48,10 @@ int main() {
 	cv::imwrite("dst.png", output);
 	cv::waitKey();
 	
+	cv::Mat fimg = FT(output, 100);
+	cv::imshow("dst", fimg);
+	cv::imwrite("fimg.png", fimg);
+	cv::waitKey();
+
 	return 0;
 }
