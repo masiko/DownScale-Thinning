@@ -2,9 +2,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-cv::Mat Thinning(cv::Mat input, int threshold) {
+cv::Mat thinning(cv::Mat input, int threshold, int* num) {
 	cv::Mat output;
-	int num = 0;
+	*num = 0;
 	int col, row;
 	int ix, iy;
 	col = input.cols;
@@ -13,7 +13,7 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 
 	if ( input.type() == CV_8UC3) cv::cvtColor(input, input, CV_BGR2GRAY);
 	
-	for (;;) {
+//	for (;;) {
 	for (int i=1; i<row-1; i++) {
 		iy = i*col;
 		for (int j=1; j<col-1; j++) {
@@ -30,7 +30,7 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 					 (input.data[j+1 + iy] < threshold && input.data[j + iy-col] < threshold && input.data[j+1 + iy-col] > threshold) ||
 					 (input.data[j+1 + iy] < threshold && input.data[j + iy+col] < threshold && input.data[j+1 + iy+col] > threshold) )
 							output.data[j + iy] = 255;
-					else	output.data[j + iy] = 0, num++;
+					else	output.data[j + iy] = 0, *num+=1;
 				}
 				else output.data[j + iy] = 255;
 			}
@@ -56,18 +56,15 @@ cv::Mat Thinning(cv::Mat input, int threshold) {
 					 (input.data[j-1 + iy] < threshold && input.data[j + iy+col] < threshold && input.data[j-1 + iy+col] > threshold) ||
 					 (input.data[j-1 + iy] < threshold && input.data[j + iy-col] < threshold && input.data[j-1 + iy-col] > threshold) )
 							output.data[j + iy] = 255;
-					else	output.data[j + iy] = 0, num++;
+					else	output.data[j + iy] = 0, *num+=1;
 				}
 				else output.data[j + iy] = 255;
 			}
 			else output.data[j + iy] = 0;
 		}
 	}
-	std::cout<<num<<",";
-	if (!num)	break;
-	num = 0;
 	output.copyTo(input);
-	}
+//	}
 
 	return output;
 }
