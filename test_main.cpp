@@ -5,20 +5,41 @@
 #include "Thinning.h"
 
 int main() {
+	char sw;
 	int thr, sca, num;
-//	cv::Mat output;
-	cv::Mat output = cv::imread("test.png");
+	cv::Mat output;
+	std::cout<<"Select input(Video or test.png): ";
+	std::cin>>sw;
+	if (sw=='V' || sw=='v')	{
+		cv::VideoCapture cap(0);
+		if (!cap.isOpened())	return -1;
+		cap >> output;
+        cv::cvtColor(output, output, CV_BGR2GRAY);
+		cap.release();
+	}
+	else	output = cv::imread("test.png");
+	
+	if (output.empty()) {	
+		std::cout<<"empty";
+		return -1;
+	}
+//	thr = 128;
+//	sca = 2;
 	std::cin>>thr;
 	std::cin>>sca;
-	if ( output.type() == CV_8UC3) cv::cvtColor(output, output, CV_BGR2GRAY);
+	if ( output.type() != CV_8UC1) cv::cvtColor(output, output, CV_BGR2GRAY);
 
 	for (;;) {
-		for (int i=0; i<4; i++) {
+		for (int i=0; i<5; i++) {
 			output = thinning(output, thr, &num);
 			if (num==0)	break;
 		}
+		if (num==0)	{
+			output = downscale(output, sca);
+			output = thinning(output, thr, &num);
+			break;
+		}
 		output = downscale(output, sca);
-		if (num==0)	break;
 	}
 
 	cv::namedWindow("dst");
