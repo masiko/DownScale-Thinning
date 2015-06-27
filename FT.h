@@ -15,30 +15,33 @@ cv::Mat FT(cv::Mat img,int size) {
 	cv::Mat fimg;
 	fimg.create(size, size, CV_8UC1);
 	
+	std::cout<<"FT\n";
+
 	for (v=-size/2; v<size/2; v++){
+		std::cout<<v<<",";
 		for (u=-size/2; u<size/2; u++){
 
-		for (int i=0; i<img.rows; i++) {
-			for (int j=0; j<img.cols; j++) {
-				y += img.data[j+i*img.cols];
-				real_x += y*cos(CON_EXP*u*j);
-				imag_x += y*sin(CON_EXP*u*j);
+			for (int i=0; i<img.rows; i++) {
+				for (int j=0; j<img.cols; j++) {
+					y = img.data[j+i*img.cols];
+					real_x += y*cos(CON_EXP*u*j);
+					imag_x += y*sin(CON_EXP*u*j);
+				}
+				real += real_x*cos(CON_EXP*v*i);
+				imag += imag_x*sin(CON_EXP*v*i);
+				real_x = 0;
+				imag_x = 0;
 			}
-			real += real_x*cos(CON_EXP*v*i);
-			imag += imag_x*sin(CON_EXP*v*i);
+
+			dst = (real*real + imag*imag)/(img.cols*img.rows*255);
+			if (dst > 255)	dst = 255;
+			else if (dst < 0) dst = 0;
+			fimg.data[(u+size/2) + (v+size/2)*size] = dst;
+			
+			real = 0;
+			imag = 0;
 			real_x = 0;
 			imag_x = 0;
-		}
-
-		dst = (real*real + imag*imag)/(img.cols*img.rows*255);
-		if (dst > 255)	dst = 255;
-		else if (dst < 0) dst = 0;
-		fimg.data[(u+size/2) + (v+size/2)*size] = dst;
-		
-		real = 0;
-		imag = 0;
-		real_x = 0;
-		imag_x = 0;
 		}
 	}
 	return fimg;

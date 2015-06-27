@@ -6,11 +6,11 @@
 #include "FT.h"
 
 int main() {
-	char sw;
+	char sw = 'a';
 	int thr, sca, num;
 	cv::Mat output;
 	std::cout<<"Select input(Video or test.png): ";
-	std::cin>>sw;
+//	std::cin>>sw;
 	if (sw=='V' || sw=='v')	{
 		cv::VideoCapture cap(0);
 		if (!cap.isOpened())	return -1;
@@ -24,10 +24,10 @@ int main() {
 		std::cout<<"empty";
 		return -1;
 	}
-//	thr = 128;
-//	sca = 2;
-	std::cin>>thr;
-	std::cin>>sca;
+	thr = 128;
+	sca = 2;
+//	std::cin>>thr;
+//	std::cin>>sca;
 	if ( output.type() != CV_8UC1) cv::cvtColor(output, output, CV_BGR2GRAY);
 
 	for (;;) {
@@ -44,14 +44,28 @@ int main() {
 	}
 
 	cv::namedWindow("dst");
-	cv::imshow("dst", output);
+//	cv::imshow("dst", output);
 	cv::imwrite("dst.png", output);
-	cv::waitKey();
+//	cv::waitKey();
 	
 	cv::Mat fimg = FT(output, 100);
-	cv::imshow("dst", fimg);
+//	cv::imshow("dst", fimg);
 	cv::imwrite("fimg.png", fimg);
+//	cv::waitKey();
+
+	output = cv::imread("test.png");
+    cv::cvtColor(output, output, CV_BGR2GRAY);
+	output = downscale(output, 2);
+	output = downscale(output, 2);
+	output = downscale(output, 2);
+	output = downscale(output, 2);
+	cv::imshow("dst", output);
 	cv::waitKey();
+	
+	fimg = FT(output, 100);
+//	cv::imshow("dst", fimg);
+	cv::imwrite("fimg_o.png", fimg);
+//	cv::waitKey();
 
 	return 0;
 }
