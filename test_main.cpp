@@ -30,19 +30,22 @@ int main() {
 //	std::cin>>sca;
 	if ( output.type() != CV_8UC1) cv::cvtColor(output, output, CV_BGR2GRAY);
 
+	int count = 1;
 	for (;;) {
 		for (int i=0; i<5; i++) {
 			output = thinning(output, thr, &num);
 			if (num==0)	break;
 		}
 		if (num==0)	{
-			output = downscale(output, sca);
+			output = downscale_avg(output, sca);
 			output = thinning(output, thr, &num);
+			count*=2;
 			break;
 		}
-		output = downscale(output, sca);
+		output = downscale_avg(output, sca);
+		count*=2;
 	}
-
+	std::cout<<"\nscale="<<count<<"\n";
 	cv::namedWindow("dst");
 //	cv::imshow("dst", output);
 	cv::imwrite("dst.png", output);
@@ -55,12 +58,9 @@ int main() {
 
 	output = cv::imread("test.png");
     cv::cvtColor(output, output, CV_BGR2GRAY);
-	output = downscale(output, 2);
-	output = downscale(output, 2);
-	output = downscale(output, 2);
-	output = downscale(output, 2);
-	cv::imshow("dst", output);
-	cv::waitKey();
+	for (int i=1; i<count; i*=2)	output = downscale_avg(output, 2);
+	cv::imwrite("input_o.png", output);
+//	cv::waitKey();
 	
 	fimg = FT(output, 100);
 //	cv::imshow("dst", fimg);
